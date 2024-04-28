@@ -11,3 +11,13 @@ class Club:
             return True
         except:
             return False
+
+    def getClub(self, clubID=None):
+        return self.db.getClub(clubID)
+
+    def joinClub(self, clubID, userID):
+        try:
+            self.db.insertClubUsers(clubID, userID)
+            return True
+        except:
+            return False

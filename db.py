@@ -1,3 +1,4 @@
+import json
 import sqlite3
 from models import UserModel
 
@@ -47,29 +48,32 @@ class DB:
         self.conn.commit()
 
     def createUser(self, kakaoUID):
-        user = self.getUser(kakaoUID)
+        user = self.getUser(kakaoUID=kakaoUID)
         if user is not None:
             return user
 
         self.cur.execute("INSERT INTO user (kakaoUID) VALUES (?)", (kakaoUID,))
         self.conn.commit()
 
-        return self.getUser(kakaoUID)
+        return self.getUser(kakaoUID=kakaoUID)
 
-    def updateUserNickname(self, kakaoUID, nickname):
+    def updateUserNickname(self, userID, nickname):
         self.cur.execute(
-            "UPDATE user SET nickname = ? WHERE kakaoUID = ?", (nickname, kakaoUID)
+            "UPDATE user SET nickname = ? WHERE id = ?", (nickname, userID)
         )
         self.conn.commit()
 
-    def updateUserRegion(self, kakaoUID, region):
-        self.cur.execute(
-            "UPDATE user SET region = ? WHERE kakaoUID = ?", (region, kakaoUID)
-        )
+    def updateUserRegion(self, userID, region):
+        self.cur.execute("UPDATE user SET region = ? WHERE id = ?", (region, userID))
         self.conn.commit()
 
-    def getUser(self, userID):
-        self.cur.execute("SELECT * FROM user WHERE id = ?", (userID,))
+    def getUser(self, kakaoUID=None, userID=None):
+        if userID is not None:
+            self.cur.execute("SELECT * FROM user WHERE id = ?", (userID,))
+        elif kakaoUID is not None:
+            self.cur.execute("SELECT * FROM user WHERE kakaoUID = ?", (kakaoUID,))
+        else:
+            return None
         data = self.cur.fetchone()
 
         if data is None:
@@ -84,12 +88,44 @@ class DB:
         )
 
     def createClub(self, name, image, owner):
+        users = json.dumps([owner])
         self.cur.execute(
-            "INSERT INTO club (name, image, owner) VALUES (?, ?, ?)",
-            (name, image, owner),
+            "INSERT INTO club (name, image, owner, users) VALUES (?, ?, ?, ?)",
+            (name, image, owner, users),
         )
         self.conn.commit()
 
-    def updateClubUsers(self, clubID, users):
+    def insertClubUsers(self, clubID, userID):
+        club = self.getClub(clubID)
+        users = club["users"]
+        users.append(userID)
+        users = json.dumps(users)
+
         self.cur.execute("UPDATE club SET users = ? WHERE id = ?", (users, clubID))
         self.conn.commit()
+
+    def getClub(self, ClubID=None):
+        if ClubID is not None:
+            self.cur.execute("SELECT * FROM club WHERE id = ?", (ClubID,))
+            data = self.cur.fetchone()
+            return {
+                "id": data[0],
+                "name": data[1],
+                "image": data[2],
+                "owner": data[3],
+                "users": json.loads(data[4]),
+            }
+
+        self.cur.execute("SELECT * FROM club")
+        data = self.cur.fetchall()
+
+        return [
+            {
+                "id": club[0],
+                "name": club[1],
+                "image": club[2],
+                "owner": club[3],
+                "users": json.loads(club[4]),
+            }
+            for club in data
+        ]
