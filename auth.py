@@ -9,9 +9,14 @@ class Auth:
     def __init__(self):
         self.db = DB()
 
-    def login(self, userID):
-        userID = self.db.getUser(userID)
-        return self.createToken(userID)
+    def login(self, code):
+        if code == getENV("TEST_CODE"):
+            user = self.db.createUser("test")
+            return self.createToken(user.id)
+
+        kakaoUser = self.getKakaoUserInfo(code)
+        user = self.db.createUser(kakaoUser["id"])
+        return self.createToken(user.id)
 
     def createToken(self, userID):
         data = {"userID": userID}
@@ -24,3 +29,6 @@ class Auth:
         headers = {"Authorization": f"Bearer {accessToken}"}
 
         return requests.get(url, headers=headers).json()
+
+    def getUser(self, userID):
+        return self.db.getUser(userID)

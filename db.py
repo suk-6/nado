@@ -1,4 +1,5 @@
 import sqlite3
+from models import UserModel
 
 
 class DB:
@@ -6,7 +7,7 @@ class DB:
         self.conn = sqlite3.connect("./data.splite", check_same_thread=False)
         self.cur = self.conn.cursor()
 
-        if not self.checkExistTable():
+        if not self.isExistTable():
             self.createTable()
 
     def __del__(self) -> None:
@@ -19,26 +20,26 @@ class DB:
         return self.cur.fetchone() is not None
 
     def createTable(self):
-        self.cur.execute(  # User Table
+        self.cur.execute(
             """
             CREATE TABLE user (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 kakaoUID TEXT,
                 image TEXT,
                 nickname TEXT,
-                region TEXT,
+                region TEXT
             )
             """
         )
 
-        self.cur.execute(  # Club Table
+        self.cur.execute(
             """
             CREATE TABLE club (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
                 image TEXT,
                 owner INTEGER,
-                users TEXT,
+                users TEXT
             )
             """
         )
@@ -46,11 +47,14 @@ class DB:
         self.conn.commit()
 
     def createUser(self, kakaoUID):
-        if self.getUser(kakaoUID) is not None:
-            return
+        user = self.getUser(kakaoUID)
+        if user is not None:
+            return user
 
         self.cur.execute("INSERT INTO user (kakaoUID) VALUES (?)", (kakaoUID,))
         self.conn.commit()
+
+        return self.getUser(kakaoUID)
 
     def updateUserNickname(self, kakaoUID, nickname):
         self.cur.execute(
@@ -64,11 +68,20 @@ class DB:
         )
         self.conn.commit()
 
-    def getUser(self, kakaoUID):
-        self.createUser(kakaoUID)
+    def getUser(self, userID):
+        self.cur.execute("SELECT * FROM user WHERE id = ?", (userID,))
+        data = self.cur.fetchone()
 
-        self.cur.execute("SELECT * FROM user WHERE kakaoUID = ?", (kakaoUID,))
-        return self.cur.fetchone()
+        if data is None:
+            return None
+
+        return UserModel(
+            id=data[0],
+            kakaoUID=None,
+            image=data[2],
+            nickname=data[3],
+            region=data[4],
+        )
 
     def createClub(self, name, image, owner):
         self.cur.execute(
