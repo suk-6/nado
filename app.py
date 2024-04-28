@@ -98,6 +98,24 @@ async def getBoard():
     return board.getBoard()
 
 
+@app.get("/board/create")
+async def createBoard(name: str, user: Annotated[UserModel, Depends(getLoginUser)]):
+    return board.createBoard(name, user.id)
+
+
+# 게시물 엔드포인트
+@app.get("/post/get")
+async def getPost():
+    return board.getPost()
+
+
+@app.post("/post/create")
+async def createPost(
+    post: PostCreateDTO, user: Annotated[UserModel, Depends(getLoginUser)]
+):
+    return board.createPost(post.title, post.content, post.board, user.id)
+
+
 if __name__ == "__main__":
     import uvicorn
 
