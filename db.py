@@ -45,6 +45,27 @@ class DB:
             """
         )
 
+        self.cur.execute(
+            """
+            CREATE TABLE board (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                owner INTEGER,
+            )
+            """
+        )
+
+        self.cur.execute(
+            """
+            CREATE TABLE post (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                content TEXT,
+                owner INTEGER,
+                board INTEGER,
+            )
+            """
+        )
         self.conn.commit()
 
     def createUser(self, kakaoUID):
@@ -128,4 +149,63 @@ class DB:
                 "users": json.loads(club[4]),
             }
             for club in data
+        ]
+
+    def createBoard(self, name, owner):
+        self.cur.execute("INSERT INTO board (name, owner) VALUES (?, ?)", (name, owner))
+        self.conn.commit()
+
+    def getBoard(self, boardID=None):
+        if boardID is not None:
+            self.cur.execute("SELECT * FROM board WHERE id = ?", (boardID,))
+            data = self.cur.fetchone()
+            return {
+                "id": data[0],
+                "name": data[1],
+                "owner": data[2],
+            }
+
+        self.cur.execute("SELECT * FROM board")
+        data = self.cur.fetchall()
+
+        return [
+            {
+                "id": board[0],
+                "name": board[1],
+                "owner": board[2],
+            }
+            for board in data
+        ]
+
+    def createPost(self, title, content, owner, board):
+        self.cur.execute(
+            "INSERT INTO post (title, content, owner, board) VALUES (?, ?, ?, ?)",
+            (title, content, owner, board),
+        )
+        self.conn.commit()
+
+    def getPost(self, postID=None):
+        if postID is not None:
+            self.cur.execute("SELECT * FROM post WHERE id = ?", (postID,))
+            data = self.cur.fetchone()
+            return {
+                "id": data[0],
+                "title": data[1],
+                "content": data[2],
+                "owner": data[3],
+                "board": data[4],
+            }
+
+        self.cur.execute("SELECT * FROM post")
+        data = self.cur.fetchall()
+
+        return [
+            {
+                "id": post[0],
+                "title": post[1],
+                "content": post[2],
+                "owner": post[3],
+                "board": post[4],
+            }
+            for post in data
         ]

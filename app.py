@@ -5,6 +5,7 @@ from jose import JWTError, jwt
 
 from club import Club
 from auth import Auth
+from board import Board
 from config import getENV
 from lecture import Lecture
 from dto import *
@@ -13,6 +14,7 @@ from models import *
 app = FastAPI()
 auth = Auth()
 club = Club()
+board = Board()
 lecture = Lecture()
 
 oauth2Scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -88,6 +90,12 @@ async def createClub(
 @app.get("/club/join/{clubID}")
 async def joinClub(clubID: int, user: Annotated[UserModel, Depends(getLoginUser)]):
     return club.joinClub(clubID, user.id)
+
+
+# 게시판 엔드포인트
+@app.get("/board/get")
+async def getBoard():
+    return board.getBoard()
 
 
 if __name__ == "__main__":
