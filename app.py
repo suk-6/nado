@@ -18,6 +18,7 @@ lecture = Lecture()
 oauth2Scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
+# Before Handler
 async def getLoginUser(token: Annotated[str, Depends(oauth2Scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -39,6 +40,7 @@ async def getLoginUser(token: Annotated[str, Depends(oauth2Scheme)]):
     return user
 
 
+# OAuth 엔드포인트
 @app.get("/login")
 async def login(code: str):
     token = auth.login(code)
@@ -46,6 +48,7 @@ async def login(code: str):
     return {"token": token}
 
 
+# 유저 엔드포인트
 @app.get("/user/me")
 async def me(user: Annotated[UserModel, Depends(getLoginUser)]):
     return user
@@ -63,11 +66,13 @@ async def updateRegion(region: str, user: Annotated[UserModel, Depends(getLoginU
     return auth.updateRegion(user.id, region)
 
 
+# 강의 엔드포인트
 @app.get("/lecture/get/{courceType}")
 async def getLecture(courceType: str):
     return lecture.getLecture(courceType)
 
 
+# 동아리 엔드포인트
 @app.get("/club/get")
 async def getClub():
     return club.getClub()
