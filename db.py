@@ -66,6 +66,27 @@ class DB:
             )
             """
         )
+
+        self.cur.execute(
+            """
+            CREATE TABLE interviewq (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question TEXT,
+            )
+            """
+        )
+
+        self.cur.execute(
+            """
+            CREATE TABLE interviewa (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                questionID INTEGER,
+                answer TEXT,
+                userID INTEGER,
+            )
+            """
+        )
+
         self.conn.commit()
 
     def createUser(self, kakaoUID):
@@ -208,4 +229,52 @@ class DB:
                 "board": post[4],
             }
             for post in data
+        ]
+
+    def saveInterviewQ(self, question):
+        self.cur.execute("INSERT INTO interviewq (question) VALUES (?)", (question,))
+        self.conn.commit()
+
+    def getInterviewQ(self, questionID=None):
+        if questionID is not None:
+            self.cur.execute("SELECT * FROM interviewq WHERE id = ?", (questionID,))
+            data = self.cur.fetchone()
+            return {
+                "id": data[0],
+                "question": data[1],
+            }
+
+        self.cur.execute("SELECT * FROM interviewq")
+        data = self.cur.fetchall()
+
+        return [
+            {
+                "id": interviewq[0],
+                "question": interviewq[1],
+            }
+            for interviewq in data
+        ]
+
+    def saveInterviewA(self, questionID, answer, userID):
+        self.cur.execute(
+            "INSERT INTO interviewa (questionID, answer, userID) VALUES (?, ?, ?)",
+            (questionID, answer, userID),
+        )
+        self.conn.commit()
+
+    def getInterviewA(self, questionID, userID):
+        self.cur.execute(
+            "SELECT * FROM interviewa WHERE questionID = ? AND userID = ?",
+            (questionID, userID),
+        )
+        data = self.cur.fetchall()
+
+        return [
+            {
+                "id": interviewa[0],
+                "questionID": interviewa[1],
+                "answer": interviewa[2],
+                "userID": interviewa[3],
+            }
+            for interviewa in data
         ]
