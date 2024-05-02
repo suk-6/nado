@@ -1,6 +1,6 @@
-import json
+# import json
+# from models import UserModel
 import sqlite3
-from models import UserModel
 
 
 class DB:
@@ -35,22 +35,9 @@ class DB:
 
         self.cur.execute(
             """
-            CREATE TABLE club (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                image TEXT,
-                owner INTEGER,
-                users TEXT
-            )
-            """
-        )
-
-        self.cur.execute(
-            """
             CREATE TABLE board (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
-                owner INTEGER,
             )
             """
         )
@@ -61,8 +48,8 @@ class DB:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT,
                 content TEXT,
-                owner INTEGER,
                 board INTEGER,
+                password TEXT,
             )
             """
         )
@@ -89,91 +76,8 @@ class DB:
 
         self.conn.commit()
 
-    def createUser(self, kakaoUID):
-        user = self.getUser(kakaoUID=kakaoUID)
-        if user is not None:
-            return user
-
-        self.cur.execute("INSERT INTO user (kakaoUID) VALUES (?)", (kakaoUID,))
-        self.conn.commit()
-
-        return self.getUser(kakaoUID=kakaoUID)
-
-    def updateUserNickname(self, userID, nickname):
-        self.cur.execute(
-            "UPDATE user SET nickname = ? WHERE id = ?", (nickname, userID)
-        )
-        self.conn.commit()
-
-    def updateUserRegion(self, userID, region):
-        self.cur.execute("UPDATE user SET region = ? WHERE id = ?", (region, userID))
-        self.conn.commit()
-
-    def getUser(self, kakaoUID=None, userID=None):
-        if userID is not None:
-            self.cur.execute("SELECT * FROM user WHERE id = ?", (userID,))
-        elif kakaoUID is not None:
-            self.cur.execute("SELECT * FROM user WHERE kakaoUID = ?", (kakaoUID,))
-        else:
-            return None
-        data = self.cur.fetchone()
-
-        if data is None:
-            return None
-
-        return UserModel(
-            id=data[0],
-            kakaoUID=None,
-            image=data[2],
-            nickname=data[3],
-            region=data[4],
-        )
-
-    def createClub(self, name, image, owner):
-        users = json.dumps([owner])
-        self.cur.execute(
-            "INSERT INTO club (name, image, owner, users) VALUES (?, ?, ?, ?)",
-            (name, image, owner, users),
-        )
-        self.conn.commit()
-
-    def insertClubUsers(self, clubID, userID):
-        club = self.getClub(clubID)
-        users = club["users"]
-        users.append(userID)
-        users = json.dumps(users)
-
-        self.cur.execute("UPDATE club SET users = ? WHERE id = ?", (users, clubID))
-        self.conn.commit()
-
-    def getClub(self, ClubID=None):
-        if ClubID is not None:
-            self.cur.execute("SELECT * FROM club WHERE id = ?", (ClubID,))
-            data = self.cur.fetchone()
-            return {
-                "id": data[0],
-                "name": data[1],
-                "image": data[2],
-                "owner": data[3],
-                "users": json.loads(data[4]),
-            }
-
-        self.cur.execute("SELECT * FROM club")
-        data = self.cur.fetchall()
-
-        return [
-            {
-                "id": club[0],
-                "name": club[1],
-                "image": club[2],
-                "owner": club[3],
-                "users": json.loads(club[4]),
-            }
-            for club in data
-        ]
-
-    def createBoard(self, name, owner):
-        self.cur.execute("INSERT INTO board (name, owner) VALUES (?, ?)", (name, owner))
+    def createBoard(self, name):
+        self.cur.execute("INSERT INTO board (name) VALUES (?)", (name))
         self.conn.commit()
 
     def getBoard(self, boardID=None):
@@ -183,7 +87,6 @@ class DB:
             return {
                 "id": data[0],
                 "name": data[1],
-                "owner": data[2],
             }
 
         self.cur.execute("SELECT * FROM board")
@@ -193,15 +96,14 @@ class DB:
             {
                 "id": board[0],
                 "name": board[1],
-                "owner": board[2],
             }
             for board in data
         ]
 
-    def createPost(self, title, content, owner, board):
+    def createPost(self, title, content, board, password):
         self.cur.execute(
-            "INSERT INTO post (title, content, owner, board) VALUES (?, ?, ?, ?)",
-            (title, content, owner, board),
+            "INSERT INTO post (title, content, board, password) VALUES (?, ?, ?, ?)",
+            (title, content, board, password),
         )
         self.conn.commit()
 
@@ -213,8 +115,7 @@ class DB:
                 "id": data[0],
                 "title": data[1],
                 "content": data[2],
-                "owner": data[3],
-                "board": data[4],
+                "board": data[3],
             }
 
         self.cur.execute("SELECT * FROM post")
@@ -225,8 +126,7 @@ class DB:
                 "id": post[0],
                 "title": post[1],
                 "content": post[2],
-                "owner": post[3],
-                "board": post[4],
+                "board": post[3],
             }
             for post in data
         ]
