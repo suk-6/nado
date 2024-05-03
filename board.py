@@ -5,6 +5,11 @@ class Board:
     def __init__(self) -> None:
         self.db = DB()
 
+        if self.getBoard() == []:
+            boardList = ["취업/진로", "요리", "건강", "문화 생활", "운동", "자유/기타"]
+            for board in boardList:
+                self.createBoard(board)
+
     def createBoard(self, name):
         try:
             self.db.createBoard(name)

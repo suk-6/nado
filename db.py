@@ -37,7 +37,7 @@ class DB:
             """
             CREATE TABLE board (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
+                name TEXT
             )
             """
         )
@@ -49,7 +49,7 @@ class DB:
                 title TEXT,
                 content TEXT,
                 board INTEGER,
-                password TEXT,
+                password TEXT
             )
             """
         )
@@ -58,7 +58,7 @@ class DB:
             """
             CREATE TABLE interviewq (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                question TEXT,
+                question TEXT
             )
             """
         )
@@ -69,7 +69,7 @@ class DB:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 questionID INTEGER,
                 answer TEXT,
-                userID INTEGER,
+                userID INTEGER
             )
             """
         )
@@ -77,7 +77,7 @@ class DB:
         self.conn.commit()
 
     def createBoard(self, name):
-        self.cur.execute("INSERT INTO board (name) VALUES (?)", (name))
+        self.cur.execute("INSERT INTO board (name) VALUES (?)", (name,))
         self.conn.commit()
 
     def getBoard(self, boardID=None):
