@@ -6,6 +6,7 @@ from config import getENV
 class Lecture:
     def __init__(self):
         self.apiURL = f"http://openAPI.seoul.go.kr:8088/{getENV('API_KEY')}/json"
+        self.onlineCourseURL = "https://sll.seoul.go.kr/lms/requestCourse/doDetailInfo.do?course_id={}&course_gubun=1"
 
         self.data = {}
         self.renewTime = None
@@ -19,6 +20,12 @@ class Lecture:
             self.renewTime = datetime.datetime.now()
             self.data[courceType] = self._getLecture(courceType)[courceType]["row"]
 
+            if courceType == "OnlineCoures":
+                for i in range(len(self.data[courceType])):
+                    self.data[courceType][i]["link"] = self.onlineCourseURL.format(
+                        self.data[courceType][i]["COURSE_ID"]
+                    )
+
         return self.data
 
     def _getLecture(self, courceType):
@@ -30,4 +37,4 @@ class Lecture:
 
 
 if __name__ == "__main__":
-    Lecture()
+    print(Lecture().getLecture()["OnlineCoures"][0])
