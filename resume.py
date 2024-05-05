@@ -1,8 +1,11 @@
 import random
 import pdfkit
+import requests
+from openai import OpenAI
+from config import getENV
 
 
-class Resume:
+class ResumePDF:
     def __init__(self, name, content) -> None:
         self.name = name
         self.content = content.split("\n")
@@ -10,7 +13,8 @@ class Resume:
         self.html = self.convertHTML()
         self.savePDF()
 
-        print(f"PDF saved at /tmp/{self.rand}.pdf")
+    def getID(self):
+        return self.rand
 
     def convertHTML(self):
         content = ""
@@ -93,8 +97,55 @@ class Resume:
         )
 
 
+class ResumeAI:
+    def __init__(self) -> None:
+        self.client = OpenAI()
+        self.client.api_key = getENV("OPENAI_API_KEY")
+        self.model = "gpt-3.5-turbo"
+
+    def generateResume(self, keywords):
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Create a personal statement for the user. Keep it to about 500 CHARACTERS. The user provides keywords. Write in Korean.",
+                },
+                {
+                    "role": "user",
+                    "content": keywords,
+                },
+            ],
+        )
+
+        return response.choices[0].message.content
+
+
+class Resume:
+    def __init__(self) -> None:
+        pass
+
+    def pdf(self, name, content):
+        return ResumePDF(name, content)
+
+    def generateResume(self, keywords):
+        return ResumeAI().generateResume(keywords)
+
+    def checkSpelling(self, orignalContent):
+        content = ""
+        for c in orignalContent.split("\n"):
+            response = requests.get(f"https://mora-bot.kr/api/v1/grammar?string={c}")
+            result = response.json()
+            print(result)
+            if result["errnum"] == 0:
+                content += f"{c}\n"
+            else:
+                content += f"{c.replace(result['wrong'], result['suggestions'][0])}\n"
+
+        return content
+
+
 if __name__ == "__main__":
-    resume = Resume(
-        "이름",
-        "내용",
+    print(
+        f"/tmp/{Resume().pdf('홍길동', ResumeAI().generateResume('장점, 성실함, 긍정적, 활발, 사교성, 개발, 파이썬')).getID()}.pdf"
     )
