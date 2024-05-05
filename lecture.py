@@ -16,6 +16,7 @@ class Lecture:
             self.renewTime is None
             or self.renewTime + datetime.timedelta(hours=1) < datetime.datetime.now()
             or self.data == {}
+            or self.data.get(courceType) is None
         ):
             self.renewTime = datetime.datetime.now()
             self.data[courceType] = self._getLecture(courceType)[courceType]["row"]
@@ -26,7 +27,7 @@ class Lecture:
                         self.data[courceType][i]["COURSE_ID"]
                     )
 
-        return self.data
+        return self.data[courceType]
 
     def _getLecture(self, courceType):
         url = f"{self.apiURL}/{courceType}"
