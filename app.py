@@ -1,15 +1,20 @@
-from fastapi import FastAPI
+import urllib
+from fastapi import FastAPI, UploadFile
+from fastapi.responses import FileResponse
 
 from board import Board
 from config import getENV
 from lecture import Lecture
 from interview import Interview
+from gaze import GazeAnalysis
+from resume import Resume
 from dto import *
 
 # from models import *
 
 app = FastAPI()
 board = Board()
+resume = Resume()
 lecture = Lecture()
 interview = Interview()
 
@@ -42,10 +47,48 @@ async def createPost(post: PostCreateDTO):
     return board.createPost(post.title, post.content, post.board, post.password)
 
 
+# 자기소개서 엔드포인트
+@app.post("/resume/pdf")
+async def generateResumePDF(data: ResumePDFDTO):
+    pdf = resume.pdf(data.name, data.content)
+    return FileResponse(f"/tmp/{pdf.rand}.pdf")
+
+
+@app.post("/resume/gpt")
+async def generateResumeGPT(data: ResumeGPTDTO):
+    return resume.generateResume(data.keywords)
+
+
+@app.post("/resume/spelling")
+async def checkSpelling(data: ResumeSpellingDTO):
+    content = urllib.parse.quote(data.content)
+    return resume.checkSpelling(resume.checkSpelling(content))
+
+
 # 질문 엔드포인트
 @app.get("/interview/q/get")
 async def getInterviewQuestion():
     return interview.getInterviewQuestion()
+
+
+# 시선 분석 엔드포인트
+# 비디오 파일 업로드
+@app.post("/interview/analysis")
+async def analysisInterview(file: UploadFile):
+    gaze = GazeAnalysis()
+
+    with open(gaze.videoPath, "wb") as f:
+        f.write(file.file.read())
+
+    result = gaze.analysis()
+    del gaze
+
+    percent = int((len(result) / 100) * 30)
+
+    if result.count("right") + result.count("left") > percent:
+        return {"result": "Looking elsewhere"}
+    else:
+        return {"result": "Looking at the camera"}
 
 
 if __name__ == "__main__":
