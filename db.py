@@ -155,6 +155,11 @@ class DB:
             for interviewq in data
         ]
 
+    def deleteAllInterviewQ(self):
+        self.cur.execute("DELETE FROM interviewq")
+        self.cur.execute("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'interviewq'")
+        self.conn.commit()
+
     def saveInterviewA(self, questionID, answer, userID):
         self.cur.execute(
             "INSERT INTO interviewa (questionID, answer, userID) VALUES (?, ?, ?)",

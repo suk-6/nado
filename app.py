@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from board import Board
 from config import getENV
 from lecture import Lecture
+from interview import Interview
 from dto import *
 
 # from models import *
@@ -10,6 +11,7 @@ from dto import *
 app = FastAPI()
 board = Board()
 lecture = Lecture()
+interview = Interview()
 
 
 # 강의 엔드포인트
@@ -33,6 +35,12 @@ async def getPost():
 @app.post("/post/create")
 async def createPost(post: PostCreateDTO):
     return board.createPost(post.title, post.content, post.board, post.password)
+
+
+# 질문 엔드포인트
+@app.get("/interview/q/get")
+async def getInterviewQuestion():
+    return interview.getInterviewQuestion()
 
 
 if __name__ == "__main__":

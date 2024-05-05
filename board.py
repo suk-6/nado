@@ -4,10 +4,10 @@ from db import DB
 class Board:
     def __init__(self) -> None:
         self.db = DB()
+        self.boardList = ["취업/진로", "요리", "건강", "문화 생활", "운동", "자유/기타"]
 
         if self.getBoard() == []:
-            boardList = ["취업/진로", "요리", "건강", "문화 생활", "운동", "자유/기타"]
-            for board in boardList:
+            for board in self.boardList:
                 self.createBoard(board)
 
     def createBoard(self, name):
