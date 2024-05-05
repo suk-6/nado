@@ -1,3 +1,4 @@
+from random import sample
 import datetime
 import requests
 from config import getENV
@@ -11,7 +12,7 @@ class Lecture:
         self.data = {}
         self.renewTime = None
 
-    def getLecture(self, courceType="OnlineCoures"):
+    def getLecture(self, courceType="OnlineCoures", count=None):
         if (
             self.renewTime is None
             or self.renewTime + datetime.timedelta(hours=1) < datetime.datetime.now()
@@ -27,7 +28,10 @@ class Lecture:
                         self.data[courceType][i]["COURSE_ID"]
                     )
 
-        return self.data[courceType]
+        if count is None:
+            return self.data[courceType]
+        else:
+            return sample(self.data[courceType], count)
 
     def _getLecture(self, courceType):
         url = f"{self.apiURL}/{courceType}"

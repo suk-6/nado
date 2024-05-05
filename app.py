@@ -20,6 +20,11 @@ async def getLecture(courceType: str):
     return lecture.getLecture(courceType)
 
 
+@app.get("/lecture/get/{courceType}/{count}")
+async def getLecture(courceType: str, count: int):
+    return lecture.getLecture(courceType, count)
+
+
 # 게시판 엔드포인트
 @app.get("/board/get")
 async def getBoard():
