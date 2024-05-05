@@ -30,11 +30,14 @@ class ResumePDF:
 			name="viewport"
 			content="width=595px, initial-scale=1.0, height=842px"
 		/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
 		<style>
 			* {{
 				margin: 0;
 				padding: 0;
-				font-family: sans-serif;
+				font-family: 'Nanum Gothic';
 			}}
 
 			body {{
