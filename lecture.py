@@ -9,28 +9,52 @@ class Lecture:
         self.apiURL = f"http://openAPI.seoul.go.kr:8088/{getENV('API_KEY')}/json"
         self.onlineCourseURL = "https://sll.seoul.go.kr/lms/requestCourse/doDetailInfo.do?course_id={}&course_gubun=1"
         self.onlineCourseCategory = {
-            "전문자격증": [
-                "공인중개사",
-                "주택관리사",
-                "직업상담사",
-                "전기기능사/기사",
-                "조리/미용",
-                "사회복지사",
-                "기타",
+            "법정의무": ["인권", "공인중개사 연수교육", "금융", "기타", "금융/회계"],
+            "인문/교양": [
+                "인문학",
+                "사회/교양",
+                "취미생활",
+                "문화예술",
+                "경영일반",
+                "취미생활",
             ],
-            "디지털": [
-                "전문기술과정",
+            "외국어": ["영어", "일본어", "중국어", "기타외국어"],
+            "가족/건강": ["건강관리", "부모교육", "아동/청소년"],
+            "정보/컴퓨터": [
+                "소셜미디어",
+                "멀티미디어",
+                "프로그래밍",
+                "OA활용",
+                "신기술교육",
                 "방송/영상",
+                "웹툰/이모티콘",
                 "AR/VR",
                 "인공지능",
-                "웹툰/이모티콘",
-                "콘텐츠산업",
-                "전문과정",
-                "취미파이프라인(디지털)",
+                "콘텐츠산업 전문과정",
             ],
-            "직무역량개발": ["직무역량과정", "경영일반", "금융/회계"],
-            "창업": ["창업과정", "마케팅", "취미파이프라인(창업)"],
-            "리더십": ["리더십/인사조직", "셀프브랜딩"],
+            "자격증": [
+                "국가공인민간자격",
+                "국가기술자격",
+                "국가전문자격",
+                "기타자격",
+                "직업상담사",
+                "공인중개사",
+                "주택관리사",
+                "사회복지사",
+                "공인중개사 연수교육",
+                "기타",
+            ],
+            "취/창업": [
+                "창업",
+                "취업",
+                "시니어취업",
+                "창업과정",
+                "직무역량과정",
+                "리더십/인사조직",
+                "셀프브랜딩",
+                "시민제작",
+                "전문기술과정",
+            ],
         }
 
         self.data = {}
@@ -52,9 +76,12 @@ class Lecture:
                         self.data[courceType][i]["COURSE_ID"]
                     )
 
-                    for key, value in self.onlineCourseCategory.items():
-                        if self.data[courceType][i]["CATEGORY_NM2"] in value:
-                            self.data[courceType][i]["category"] = key
+                    if self.data[courceType][i]["CATEGORY_NM2"] == "기타":
+                        self.data[courceType][i]["category"] = "기타"
+                    else:
+                        for key, value in self.onlineCourseCategory.items():
+                            if self.data[courceType][i]["CATEGORY_NM2"] in value:
+                                self.data[courceType][i]["category"] = key
 
                     if self.data[courceType][i].get("category") is None:
                         self.data[courceType][i]["category"] = "기타"
