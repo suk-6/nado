@@ -132,17 +132,24 @@ class Resume:
         return ResumeAI().generateResume(keywords)
 
     def checkSpelling(self, orignalContent):
-        content = ""
-        for c in orignalContent.split("\n"):
-            response = requests.get(f"https://mora-bot.kr/api/v1/grammar?string={c}")
-            result = response.json()
-            print(result)
-            if result["errnum"] == 0:
-                content += f"{c}\n"
-            else:
-                content += f"{c.replace(result['wrong'], result['suggestions'][0])}\n"
+        try:
+            content = ""
+            for c in orignalContent.split("\n"):
+                response = requests.get(
+                    f"https://mora-bot.kr/api/v1/grammar?string={c}"
+                )
+                result = response.json()
+                print(result)
+                if result["errnum"] == 0:
+                    content += f"{c}\n"
+                else:
+                    content += (
+                        f"{c.replace(result['wrong'], result['suggestions'][0])}\n"
+                    )
 
-        return content
+            return content
+        except Exception as e:
+            return orignalContent
 
 
 if __name__ == "__main__":
