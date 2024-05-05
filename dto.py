@@ -6,3 +6,16 @@ class PostCreateDTO(BaseModel):
     content: str
     board: int
     password: str
+
+
+class ResumePDFDTO(BaseModel):
+    name: str
+    content: str
+
+
+class ResumeGPTDTO(BaseModel):
+    keywords: str
+
+
+class ResumeSpellingDTO(BaseModel):
+    content: str
