@@ -9,6 +9,8 @@ COPY . .
 
 RUN echo "deb http://security.ubuntu.com/ubuntu bionic-security main" >> /etc/apt/sources.list
 
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+
 RUN apt update
 RUN apt-cache policy libssl1.0-dev
 RUN apt install -y build-essential cmake wget git libxrender1 fonts-nanum fontconfig libgl1-mesa-glx libglib2.0-0 libssl1.0-dev
