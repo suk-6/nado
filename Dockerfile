@@ -7,6 +7,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 COPY . .
 
+RUN apt update
+RUN apt install -y gnupg
+
 RUN echo "deb http://security.ubuntu.com/ubuntu bionic-security main" >> /etc/apt/sources.list
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
