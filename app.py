@@ -20,7 +20,7 @@ stt = STT(openai())
 board = Board()
 resume = Resume(openai())
 lecture = Lecture()
-interview = Interview()
+interview = Interview(openai())
 
 
 # 강의 엔드포인트
@@ -85,16 +85,25 @@ async def analysisInterview(file: UploadFile):
         f.write(file.file.read())
 
     gazeResult = gaze.analysis()
-    del gaze
 
     stt.mp4tomp3(gaze.id)
     text = stt(f"/tmp/{gaze.id}.mp3")
+    del gaze
 
     percent = int((len(gazeResult) / 100) * 30)
     if gazeResult.count("right") + gazeResult.count("left") > percent:
         gazeResult = "Looking elsewhere"
     else:
         gazeResult = "Looking at the camera"
+
+    result = {
+        "gaze tracking result": gazeResult,
+        "interviewer": text,
+    }
+
+    print(result)
+
+    return interview.interviewAnalysis(result)
 
 
 if __name__ == "__main__":
