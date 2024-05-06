@@ -24,9 +24,12 @@ WORKDIR /app/dlib
 RUN git clone -b 'v19.9' --single-branch https://github.com/davisking/dlib.git /app/dlib
 RUN python /app/dlib/setup.py install
 
-RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
-RUN tar vxf wkhtmltox-0.12.3_linux-generic-amd64.tar.xz 
-RUN cp wkhtmltox/bin/wk* /usr/local/bin/
+# RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
+# RUN tar vxf wkhtmltox-0.12.3_linux-generic-amd64.tar.xz 
+# RUN cp wkhtmltox/bin/wk* /usr/local/bin/
+
+RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb
+RUN apt install -y ./wkhtmltox_0.12.6-1.buster_amd64.deb
 
 WORKDIR /app
 
