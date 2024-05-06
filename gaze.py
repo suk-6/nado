@@ -5,7 +5,7 @@ from gaze_tracking import GazeTracking
 
 class GazeAnalysis:
     def __init__(self) -> None:
-        self.id = random.randint(0, 1000000)
+        self.id = random.randint(100000, 999999)
         self.videoPath = f"/tmp/{self.id}.mp4"
         self.statusList = []
 

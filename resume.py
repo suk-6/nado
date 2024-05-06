@@ -9,7 +9,7 @@ class ResumePDF:
     def __init__(self, name, content) -> None:
         self.name = name
         self.content = content.split("\n")
-        self.rand = random.randint(0, 1000000)
+        self.rand = random.randint(100000, 999999)
         self.html = self.convertHTML()
         self.savePDF()
 
