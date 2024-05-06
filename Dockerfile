@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 RUN apt update
-RUN apt install -y build-essential cmake wget git libxrender1 fonts-nanum fontconfig libgl1-mesa-glx libglib2.0-0 libssl1.1
+RUN apt install -y build-essential cmake wget git libxrender1 fonts-nanum fontconfig libgl1-mesa-glx libglib2.0-0 libssl1.0-dev
 RUN pip install fastapi uvicorn requests openai pdfkit python-dotenv opencv-python python-multipart cmake
 RUN fc-cache -fv
 
