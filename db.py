@@ -74,6 +74,17 @@ class DB:
             """
         )
 
+        self.cur.execute(
+            """
+            CREATE TABLE comment (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                postID INTEGER,
+                commentID INTEGER,
+                content TEXT
+            )
+            """
+        )
+
         self.conn.commit()
 
     def createBoard(self, name):
@@ -99,6 +110,18 @@ class DB:
             }
             for board in data
         ]
+
+    def deleteBoard(self, id, password):
+        self.cur.execute("SELECT * FROM board WHERE id = ?", (id,))
+        data = self.cur.fetchone()
+
+        if data[2] != password:
+            return False
+
+        self.cur.execute("DELETE FROM board WHERE id = ?", (id,))
+        self.conn.commit()
+
+        return True
 
     def createPost(self, title, content, board, password):
         self.cur.execute(
@@ -182,4 +205,25 @@ class DB:
                 "userID": interviewa[3],
             }
             for interviewa in data
+        ]
+
+    def addComment(self, postID, commentID, content):
+        self.cur.execute(
+            "INSERT INTO comment (postID, commentID, content) VALUES (?, ?, ?)",
+            (postID, commentID, content),
+        )
+        self.conn.commit()
+
+    def getComment(self, postID):
+        self.cur.execute("SELECT * FROM comment WHERE postID = ?", (postID,))
+        data = self.cur.fetchall()
+
+        return [
+            {
+                "id": comment[0],
+                "postID": comment[1],
+                "commentID": comment[2],
+                "content": comment[3],
+            }
+            for comment in data
         ]
