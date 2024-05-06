@@ -8,13 +8,17 @@ from lecture import Lecture
 from interview import Interview
 from gaze import GazeAnalysis
 from resume import Resume
+from stt import STT
+from openaic import OpenAIClass
 from dto import *
 
 # from models import *
 
 app = FastAPI()
+openai = OpenAIClass()
+stt = STT(openai())
 board = Board()
-resume = Resume()
+resume = Resume(openai())
 lecture = Lecture()
 interview = Interview()
 
@@ -80,15 +84,17 @@ async def analysisInterview(file: UploadFile):
     with open(gaze.videoPath, "wb") as f:
         f.write(file.file.read())
 
-    result = gaze.analysis()
+    gazeResult = gaze.analysis()
     del gaze
 
-    percent = int((len(result) / 100) * 30)
+    stt.mp4tomp3(gaze.id)
+    text = stt(f"/tmp/{gaze.id}.mp3")
 
-    if result.count("right") + result.count("left") > percent:
-        return {"result": "Looking elsewhere"}
+    percent = int((len(gazeResult) / 100) * 30)
+    if gazeResult.count("right") + gazeResult.count("left") > percent:
+        gazeResult = "Looking elsewhere"
     else:
-        return {"result": "Looking at the camera"}
+        gazeResult = "Looking at the camera"
 
 
 if __name__ == "__main__":

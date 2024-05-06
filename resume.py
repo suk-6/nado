@@ -101,13 +101,12 @@ class ResumePDF:
 
 
 class ResumeAI:
-    def __init__(self) -> None:
-        self.client = OpenAI()
-        self.client.api_key = getENV("OPENAI_API_KEY")
+    def __init__(self, client) -> None:
+        self._client = client
         self.model = "gpt-3.5-turbo"
 
     def generateResume(self, keywords):
-        response = self.client.chat.completions.create(
+        response = self._client.chat.completions.create(
             model=self.model,
             messages=[
                 {
@@ -125,14 +124,14 @@ class ResumeAI:
 
 
 class Resume:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, client) -> None:
+        self._client = client
 
     def pdf(self, name, content):
         return ResumePDF(name, content)
 
     def generateResume(self, keywords):
-        return ResumeAI().generateResume(keywords)
+        return ResumeAI(self._client).generateResume(keywords)
 
     def checkSpelling(self, orignalContent):
         try:
