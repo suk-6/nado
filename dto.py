@@ -19,3 +19,9 @@ class ResumeGPTDTO(BaseModel):
 
 class ResumeSpellingDTO(BaseModel):
     content: str
+
+
+class CommentAddDTO(BaseModel):
+    postID: int
+    commentID: int
+    content: str
