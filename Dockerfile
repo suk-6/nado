@@ -17,7 +17,7 @@ RUN apt update
 RUN apt-cache policy libssl1.0-dev
 RUN apt install -y libssl1.0-dev
 
-RUN pip install fastapi uvicorn requests openai pdfkit python-dotenv opencv-python python-multipart cmake
+RUN pip install fastapi uvicorn requests openai pdfkit python-dotenv opencv-python python-multipart cmake moviepy
 
 RUN fc-cache -fv
 
