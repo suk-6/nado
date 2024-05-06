@@ -52,6 +52,11 @@ async def getBoard():
     return board.getBoard()
 
 
+@app.get("/board/delete/{id}")
+async def deleteBoard(id: int, password: str):
+    return board.deleteBoard(id)
+
+
 # 게시물 엔드포인트
 @app.get("/post/get")
 async def getPost():
@@ -61,6 +66,16 @@ async def getPost():
 @app.post("/post/create")
 async def createPost(post: PostCreateDTO):
     return board.createPost(post.title, post.content, post.board, post.password)
+
+
+@app.get("/comment/get")
+async def getComment(postID: int):
+    return board.getComment(postID)
+
+
+@app.post("/comment/add")
+async def addComment(comment: CommentAddDTO):
+    return board.addComment(comment.postID, comment.commentID, comment.content)
 
 
 # 자기소개서 엔드포인트
