@@ -1,6 +1,8 @@
+import os
 import urllib
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import FileResponse
+from contextlib import asynccontextmanager
 
 from board import Board
 from config import getENV
@@ -14,7 +16,17 @@ from dto import *
 
 # from models import *
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    os.system("rm -rf /tmp/*.mp3")
+    os.system("rm -rf /tmp/*.mp4")
+    os.system("rm -rf /tmp/*.html")
+    os.system("rm -rf /tmp/*.pdf")
+
+
+app = FastAPI(lifespan=lifespan)
 openai = OpenAIClass()
 stt = STT(openai())
 board = Board()
