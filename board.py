@@ -20,6 +20,9 @@ class Board:
     def getBoard(self, boardID=None):
         return self.db.getBoard(boardID)
 
+    def deleteBoard(self, id, password):
+        return self.db.deleteBoard(id, password)
+
     def createPost(self, title, content, board, password):
         try:
             self.db.createPost(title, content, board, password)
@@ -29,3 +32,13 @@ class Board:
 
     def getPost(self, postID=None):
         return self.db.getPost(postID)
+
+    def getComment(self, postID):
+        return self.db.getComment(postID)
+
+    def addComment(self, postID, commentID, content):
+        try:
+            self.db.addComment(postID, commentID, content)
+            return True
+        except:
+            return False
