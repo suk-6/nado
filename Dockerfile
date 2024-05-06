@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 COPY . .
 
-RUN echo "deb http://security.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list
+RUN echo "deb http://security.ubuntu.com/ubuntu bionic-security main" >> /etc/apt/sources.list
 
 RUN apt update
 RUN apt-cache policy libssl1.0-dev
