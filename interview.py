@@ -2,13 +2,31 @@ from db import DB
 
 
 class Interview:
-    def __init__(self) -> None:
+    def __init__(self, client) -> None:
         self.db = DB()
+        self._client = client
         self.deleteAllInterviewQuestion()
         with open("questions.txt", "r") as f:
             self.questions = f.readlines()
             for question in self.questions:
                 self.saveInterviewQuestion(question)
+
+    def interviewAnalysis(self, result):
+        result = self._client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Analyze the interview. Write a summary of the interview. to about 500 CHARACTERS. Write in Korean.",
+                },
+                {
+                    "role": "user",
+                    "content": str(result),
+                },
+            ],
+        )
+
+        return result.choices[0].message.content
 
     def saveInterviewQuestion(self, question):
         try:
