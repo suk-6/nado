@@ -7,7 +7,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 COPY . .
 
+RUN echo "deb http://security.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list
+
 RUN apt update
+RUN apt-cache policy libssl1.0-dev
 RUN apt install -y build-essential cmake wget git libxrender1 fonts-nanum fontconfig libgl1-mesa-glx libglib2.0-0 libssl1.0-dev
 RUN pip install fastapi uvicorn requests openai pdfkit python-dotenv opencv-python python-multipart cmake
 RUN fc-cache -fv
