@@ -1,5 +1,6 @@
 import os
 import urllib
+import urllib.parse
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
@@ -92,8 +93,8 @@ async def generateResumeGPT(data: ResumeGPTDTO):
 
 @app.post("/resume/spelling")
 async def checkSpelling(data: ResumeSpellingDTO):
-    content = urllib.parse.quote(data.content)
-    return resume.checkSpelling(resume.checkSpelling(content))
+    result = resume.checkSpelling(data.content)
+    return urllib.parse.quote(result)
 
 
 # 질문 엔드포인트
