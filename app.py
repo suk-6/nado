@@ -93,8 +93,7 @@ async def generateResumeGPT(data: ResumeGPTDTO):
 
 @app.post("/resume/spelling")
 async def checkSpelling(data: ResumeSpellingDTO):
-    result = resume.checkSpelling(data.content)
-    return urllib.parse.quote(result)
+    return resume.checkSpelling(data.content)
 
 
 # 질문 엔드포인트
