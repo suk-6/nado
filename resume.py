@@ -1,3 +1,4 @@
+import re
 import random
 import pdfkit
 import requests
@@ -135,17 +136,55 @@ class Resume:
 
     def checkSpelling(self, orignalContent):
         try:
-            content = orignalContent
             res = requests.post(
                 getENV("SPELLING_CHECKER_URL"),
                 json={"text": orignalContent},
             )
-            for r in res.json():
-                content = content.replace(r["token"], r["suggestions"][0])
-
-            return content
+            return processingSpelling(orignalContent, res.json())
         except Exception as e:
+            print(e)
             return orignalContent
+
+
+def processingSpelling(text, corrections):
+    corrections = sorted(corrections, key=lambda x: len(x["token"]), reverse=True)
+    changes = []
+    current = text
+
+    for correction in corrections:
+        token = correction["token"]
+        if "suggestions" in correction and correction["suggestions"]:
+            suggestion = correction["suggestions"][0]
+
+            for match in re.finditer(re.escape(token), current):
+                start_index = match.start()
+                end_index = match.end()
+
+                changes.append(
+                    {"start": start_index, "end": end_index, "replacement": suggestion}
+                )
+
+                current = current[:start_index] + suggestion + current[end_index:]
+
+                adjustment = len(suggestion) - len(token)
+                changes = [
+                    {
+                        **change,
+                        "start": change["start"]
+                        + (adjustment if change["start"] >= end_index else 0),
+                        "end": change["end"]
+                        + (adjustment if change["end"] > end_index else 0),
+                    }
+                    for change in changes
+                ]
+
+        changes = sorted(changes, key=lambda x: x["start"])
+
+    return {
+        "original": text,
+        "corrected": current,
+        "changes": changes,
+    }
 
 
 if __name__ == "__main__":
