@@ -135,19 +135,14 @@ class Resume:
 
     def checkSpelling(self, orignalContent):
         try:
-            content = ""
-            for c in orignalContent.split("\n"):
-                response = requests.get(
-                    f"https://mora-bot.kr/api/v1/grammar?string={c}"
-                )
-                result = response.json()
-                print(result)
-                if result["errnum"] == 0:
-                    content += f"{c}\n"
-                else:
-                    content += (
-                        f"{c.replace(result['wrong'], result['suggestions'][0])}\n"
-                    )
+            content = orignalContent
+            res = requests.post(
+                getENV("SPELLING_CHECKER_URL"),
+                json={"text": orignalContent},
+            )
+            print(res.json())
+            for r in res.json():
+                content = content.replace(r["token"], r["suggestions"][0])
 
             return content
         except Exception as e:
