@@ -140,7 +140,6 @@ class Resume:
                 getENV("SPELLING_CHECKER_URL"),
                 json={"text": orignalContent},
             )
-            print(res.json())
             for r in res.json():
                 content = content.replace(r["token"], r["suggestions"][0])
 
