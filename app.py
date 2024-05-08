@@ -1,11 +1,9 @@
 import os
-import urllib.parse
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 
 from board import Board
-from config import getENV
 from lecture import Lecture
 from interview import Interview
 from gaze import GazeAnalysis
@@ -14,8 +12,6 @@ from stt import STT
 from openaic import OpenAIClass
 from weather import Weather
 from dto import *
-
-# from models import *
 
 
 @asynccontextmanager
