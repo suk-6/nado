@@ -1,5 +1,4 @@
 import os
-import urllib
 import urllib.parse
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import FileResponse
@@ -13,6 +12,7 @@ from gaze import GazeAnalysis
 from resume import Resume
 from stt import STT
 from openaic import OpenAIClass
+from weather import Weather
 from dto import *
 
 # from models import *
@@ -34,6 +34,12 @@ board = Board()
 resume = Resume(openai())
 lecture = Lecture()
 interview = Interview(openai())
+weather = Weather()
+
+
+@app.get("/weather")
+async def getWeather():
+    return weather.getWeather()
 
 
 # 강의 엔드포인트
