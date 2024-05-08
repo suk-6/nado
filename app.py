@@ -129,8 +129,6 @@ async def analysisInterview(file: UploadFile):
         "interviewer": text,
     }
 
-    print(result)
-
     return interview.interviewAnalysis(result)
 
 
