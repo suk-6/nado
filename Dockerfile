@@ -3,6 +3,7 @@ FROM python:3.10.3-slim-bullseye
 LABEL maintainer="https://suk.kr"
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Seoul
 
 WORKDIR /app
 COPY . .
