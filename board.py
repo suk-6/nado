@@ -33,6 +33,9 @@ class Board:
     def getPost(self, postID=None, boardID=None):
         return self.db.getPost(postID, boardID)
 
+    def deletePost(self, postID, password):
+        return self.db.deletePost(postID, password)
+
     def getComment(self, postID):
         return self.db.getComment(postID)
 

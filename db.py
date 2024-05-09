@@ -168,6 +168,18 @@ class DB:
             for post in data
         ]
 
+    def deletePost(self, postID, password):
+        self.cur.execute("SELECT * FROM post WHERE id = ?", (postID,))
+        data = self.cur.fetchone()
+
+        if data[4] != password:
+            return False
+
+        self.cur.execute("DELETE FROM post WHERE id = ?", (postID,))
+        self.conn.commit()
+
+        return True
+
     def saveInterviewQ(self, question):
         self.cur.execute("INSERT INTO interviewq (question) VALUES (?)", (question,))
         self.conn.commit()

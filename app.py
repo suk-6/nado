@@ -71,6 +71,11 @@ async def createPost(post: PostCreateDTO):
     return board.createPost(post.title, post.content, post.board, post.password)
 
 
+@app.get("/post/delete/{id}")
+async def deletePost(id: int, password: str):
+    return board.deletePost(id, password)
+
+
 @app.get("/comment/get")
 async def getComment(postID: int):
     return board.getComment(postID)
