@@ -57,7 +57,7 @@ async def getBoard():
 
 @app.get("/board/delete/{id}")
 async def deleteBoard(id: int, password: str):
-    return board.deleteBoard(id)
+    return board.deleteBoard(id, password)
 
 
 # 게시물 엔드포인트
