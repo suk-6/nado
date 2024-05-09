@@ -5,6 +5,8 @@ services:
     ports:
       - "8001:8000"
     restart: always
+    volumes:
+      - ./data.sqlite:/app/data.sqlite
 
   spell:
     build: ./hanspell-server
