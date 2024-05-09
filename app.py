@@ -62,8 +62,8 @@ async def deleteBoard(id: int, password: str):
 
 # 게시물 엔드포인트
 @app.get("/post/get")
-async def getPost():
-    return board.getPost()
+async def getPost(postID: int = None, boardID: int = None):
+    return board.getPost(postID, boardID)
 
 
 @app.post("/post/create")

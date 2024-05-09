@@ -130,7 +130,7 @@ class DB:
         )
         self.conn.commit()
 
-    def getPost(self, postID=None):
+    def getPost(self, postID=None, boardID=None):
         if postID is not None:
             self.cur.execute("SELECT * FROM post WHERE id = ?", (postID,))
             data = self.cur.fetchone()
@@ -140,6 +140,20 @@ class DB:
                 "content": data[2],
                 "board": data[3],
             }
+
+        if boardID is not None:
+            self.cur.execute("SELECT * FROM post WHERE board = ?", (boardID,))
+            data = self.cur.fetchall()
+
+            return [
+                {
+                    "id": post[0],
+                    "title": post[1],
+                    "content": post[2],
+                    "board": post[3],
+                }
+                for post in data
+            ]
 
         self.cur.execute("SELECT * FROM post")
         data = self.cur.fetchall()

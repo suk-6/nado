@@ -30,8 +30,8 @@ class Board:
         except:
             return False
 
-    def getPost(self, postID=None):
-        return self.db.getPost(postID)
+    def getPost(self, postID=None, boardID=None):
+        return self.db.getPost(postID, boardID)
 
     def getComment(self, postID):
         return self.db.getComment(postID)
