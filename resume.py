@@ -2,7 +2,6 @@ import re
 import random
 import pdfkit
 import requests
-from openai import OpenAI
 from config import getENV
 
 
